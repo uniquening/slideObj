@@ -16,6 +16,16 @@ function addEvent(elem, event, fn) {
 	}
 }
 
+function removeEvent(elem, event, fn) {
+	if (elem.removeEventListener) {
+		elem.removeEventListener(event, fn, false);
+	} else if (elem.attachEvent) {
+		elem.detachEvent('on' + event, fn);
+	} else {
+		elem['on' + event] = null;
+	}
+}
+
 function startMove(dom, attrObj, callback) {
 	clearInterval(dom.timer);
 	if (attrObj['opacity'] !== undefined) attrObj['opacity'] *= 100;

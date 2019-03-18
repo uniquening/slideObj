@@ -2,6 +2,7 @@
 	function SliderQfl() {
 		this.domId = 'box';
 		this.init();
+		console.log(this.broadcastMe.touchstart);
 	}
 	SliderQfl.prototype.init = function() {
 		//获取操作DOM节点
@@ -117,7 +118,24 @@
 		})
 		for (var i = 0; i < this.broadcastMeSpot.length; i++) {
 			(function(i) {
-				addEvent(self.broadcastMeSpot[i], 'click', function() {
+				addEvent(self.broadcastMeSpot[i], 'click', function(e) {
+
+					// e != undefined ? e.stopPropagaton() : (window.event.cancelBubble = true);
+					// e != undefined ? e.preventDefault() : (window.event.returnValue = false);
+					console.log(e);
+					self.lock = false;
+					clearTimeout(self.timer);
+
+					self.curIndex = i;
+					self.renderSpot(self.curIndex);
+					startMove(self.broadcastMeList, {
+						'margin-left': -i * self.moveWidth
+					}, function() {
+						self.lock = true;
+						// self.timer = setTimeout(self.autoMove.bind(self), 1500)
+					})
+				})
+				addEvent(self.broadcastMeSpot[i], 'touchend', function(e) {
 					self.lock = false;
 					clearTimeout(self.timer);
 
@@ -132,7 +150,88 @@
 				})
 			}(i))
 		}
+
+		function touchstart(e) {
+			console.log("dkfkdl");
+			var _self = self;
+			console.log(e);
+			e.returnValue = false;
+			var startTop = _self.offsetTop;
+			var touchstart = e.targetTouches[0];
+			var endPos = {};
+			var offsetPos = {}
+			var startPos = {
+				x: touchstart.pageX,
+				y: touchstart.pageY
+			}
+
+			function touchmove(e) {
+				var self = _self;
+				e.returnValue = false;
+				// e != undefined ? e.stopPropagaton() : (window.event.returnValue = false);
+				var touchmove = e.targetTouches[0];
+				endPos = {
+					x: touchmove.pageX,
+					y: touchmove.pageY
+				}
+				offsetPos = {
+					x: endPos.x - startPos.x,
+					y: endPos.y - startPos.y
+				}
+				if (offsetPos.x < 0) {
+					var curLeft = parseInt(getStyle(self.broadcastMeList, 'margin-left'));
+					var eWidth = self.moveWidth;
+					var num = self.itemLen - 2;
+					clearTimeout(self.timer);
+					if (self.lock) {
+						self.lock = false;
+						self.curIndex++;
+						if (curLeft == -eWidth * num) self.curIndex = 0;
+						self.renderSpot(self.curIndex);
+						self.startMove(self.broadcastMeList, {
+							'margin-left': curLeft - eWidth
+						}, function() {
+							self.lock = true;
+						})
+					}
+				} else {
+					var curLeft = parseInt(getStyle(self.broadcastMeList, 'margin-left'));
+					var eWidth = self.moveWidth;
+					var num = self.itemLen - 2;
+					clearTimeout(self.timer);
+					if (self.lock) {
+						self.lock = false;
+						if (curLeft == 0) {
+							self.broadcastMeList.style.marginLeft = -eWidth * (num + 1) + 'px';
+							self.curIndex = num;
+						}
+						self.curIndex--;
+						self.renderSpot(self.curIndex);
+						curLeft = parseInt(getStyle(self.broadcastMeList, 'margin-left'));
+						self.startMove(self.broadcastMeList, {
+							'margin-left': curLeft + eWidth
+						}, function() {
+							self.lock = true;
+						})
+					}
+				}
+			}
+			addEvent(_self.broadcastMe, 'touchmove', touchmove);
+
+			function touchend(e) {
+				var self = _self;
+				e.returnValue = false;
+				// e != undefined ? e.stopPropagaton() : (window.event.returnValue = false);
+				removeEvent(self.broadcastMe, 'touchmove', touchmove);
+				removeEvent(self.broadcastMe, 'touchstart', touchstart);
+			}
+			addEvent(_self.broadcastMe, 'touchend', touchend);
+		}
+		// if (self.broadcastMe.touchstart != undefined) {
+		addEvent(self.broadcastMe, 'touchstart', touchstart)
+		// }
 	}
+
 
 	SliderQfl.prototype.renderSpot = function(index) {
 		for (var i = 0; i < this.broadcastMeSpot.length; i++) {
