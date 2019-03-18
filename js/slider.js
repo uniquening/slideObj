@@ -20,7 +20,7 @@
 		for (var i = 0; i < this.broadcastMeItem.length; i++) {
 			this.broadcastMeItem[i].style.width = this.moveWidth + 'px';
 		}
-
+		this.broadcastMe.style.width = this.moveWidth + 'px';
 		this.broadcastMeTool = document.getElementById('broadcastMe-tool');
 		this.broadcastMeSpot = this.broadcastMeTool.getElementsByTagName('div');
 		MeToolWidth = parseInt(getStyle(this.broadcastMeTool, 'width'));
@@ -34,7 +34,7 @@
 	}
 	SliderQfl.prototype.autoMove = function(direction) {
 		var self = this;
-		var curLeft = parseInt(getStyle(this.broadcastMeList, 'left'));
+		var curLeft = parseInt(getStyle(this.broadcastMeList, 'margin-left'));
 		var eWidth = this.moveWidth;
 		var num = this.itemLen - 2;
 		clearTimeout(self.timer);
@@ -45,10 +45,10 @@
 				if (curLeft == -eWidth * num) self.curIndex = 0;
 				self.renderSpot(self.curIndex);
 				self.startMove(self.broadcastMeList, {
-					left: curLeft - eWidth
+					'margin-left': curLeft - eWidth
 				}, function() {
 					if (curLeft == -eWidth * num) {
-						self.broadcastMeList.style.left = '0px';
+						self.broadcastMeList.style.marginLeft = '0px';
 						self.curIndex = 0;
 					}
 					self.timer = setTimeout(self.autoMove.bind(self), 3000);
@@ -57,14 +57,14 @@
 			} else if (direction == "toLeft") {
 				if (curLeft == 0) {
 					// console.log(curLeft, self, eWidth * num);
-					self.broadcastMeList.style.left = -eWidth * (num + 1) + 'px';
+					self.broadcastMeList.style.marginLeft = -eWidth * (num + 1) + 'px';
 					self.curIndex = num;
 				}
 				self.curIndex--;
 				self.renderSpot(self.curIndex);
-				curLeft = parseInt(getStyle(this.broadcastMeList, 'left'));
+				curLeft = parseInt(getStyle(this.broadcastMeList, 'margin-left'));
 				self.startMove(self.broadcastMeList, {
-					left: curLeft + eWidth
+					'margin-left': curLeft + eWidth
 				}, function() {
 					console.log(self)
 					self.timer = setTimeout(self.autoMove.bind(self), 3000);
@@ -77,9 +77,11 @@
 		var self = this;
 		console.log('kdfkldjfkld', addEvent)
 		addEvent(self.broadcastMeBtnLeft, 'click', function() {
+			clearTimeout(self.timer);
 			self.autoMove('toLeft');
 		});
 		addEvent(self.broadcastMeBtnRight, 'click', function() {
+			clearTimeout(self.timer);
 			self.autoMove();
 		})
 		addEvent(self.broadcastMe, 'mouseenter', function() {
@@ -100,7 +102,7 @@
 					self.curIndex = i;
 					self.renderSpot(self.curIndex);
 					startMove(self.broadcastMeList, {
-						left: -i * self.moveWidth
+						'margin-left': -i * self.moveWidth
 					}, function() {
 						self.lock = true;
 						self.timer = setTimeout(self.autoMove.bind(self), 1500)
