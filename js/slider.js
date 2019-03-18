@@ -1,6 +1,5 @@
 (function() {
 	function SliderQfl() {
-		console.log(10)
 		this.domId = 'box';
 		this.init();
 	}
@@ -24,7 +23,6 @@
 		this.broadcastMeTool = document.getElementById('broadcastMe-tool');
 		this.broadcastMeSpot = this.broadcastMeTool.getElementsByTagName('div');
 		MeToolWidth = parseInt(getStyle(this.broadcastMeTool, 'width'));
-		console.log(MeToolWidth, this.broadcastMeSpot);
 		this.broadcastMeTool.style.marginLeft = '-75px';
 		this.broadcastMeBtnLeft = document.getElementById('broadcastMe-btn-left');
 		this.broadcastMeBtnRight = document.getElementById('broadcastMe-btn-right');
@@ -56,7 +54,6 @@
 				})
 			} else if (direction == "toLeft") {
 				if (curLeft == 0) {
-					// console.log(curLeft, self, eWidth * num);
 					self.broadcastMeList.style.marginLeft = -eWidth * (num + 1) + 'px';
 					self.curIndex = num;
 				}
@@ -66,7 +63,6 @@
 				self.startMove(self.broadcastMeList, {
 					'margin-left': curLeft + eWidth
 				}, function() {
-					console.log(self)
 					self.timer = setTimeout(self.autoMove.bind(self), 3000);
 					self.lock = true;
 				})
@@ -75,7 +71,6 @@
 	}
 	SliderQfl.prototype.bindEvent = function() {
 		var self = this;
-		console.log('kdfkldjfkld', addEvent)
 		addEvent(self.broadcastMeBtnLeft, 'click', function() {
 			var curLeft = parseInt(getStyle(self.broadcastMeList, 'margin-left'));
 			var eWidth = self.moveWidth;
@@ -115,10 +110,7 @@
 			}
 		})
 		addEvent(self.broadcastMe, 'mouseenter', function() {
-			console.log("kdfljdkfjkdfjlkd", self)
-			console.log(self.timer);
 			clearTimeout(self.timer);
-			console.log(self.timer);
 		})
 		addEvent(self.broadcastMe, 'mouseleave', function() {
 			self.timer = setTimeout(self.autoMove.bind(self), 3000);
@@ -135,7 +127,7 @@
 						'margin-left': -i * self.moveWidth
 					}, function() {
 						self.lock = true;
-						self.timer = setTimeout(self.autoMove.bind(self), 1500)
+						// self.timer = setTimeout(self.autoMove.bind(self), 1500)
 					})
 				})
 			}(i))
@@ -183,4 +175,4 @@
 	});
 })(window)
 
-var aa
+var aa;
