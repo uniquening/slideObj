@@ -77,12 +77,42 @@
 		var self = this;
 		console.log('kdfkldjfkld', addEvent)
 		addEvent(self.broadcastMeBtnLeft, 'click', function() {
+			var curLeft = parseInt(getStyle(self.broadcastMeList, 'margin-left'));
+			var eWidth = self.moveWidth;
+			var num = self.itemLen - 2;
 			clearTimeout(self.timer);
-			self.autoMove('toLeft');
+			if (self.lock) {
+				self.lock = false;
+				if (curLeft == 0) {
+					self.broadcastMeList.style.marginLeft = -eWidth * (num + 1) + 'px';
+					self.curIndex = num;
+				}
+				self.curIndex--;
+				self.renderSpot(self.curIndex);
+				curLeft = parseInt(getStyle(self.broadcastMeList, 'margin-left'));
+				self.startMove(self.broadcastMeList, {
+					'margin-left': curLeft + eWidth
+				}, function() {
+					self.lock = true;
+				})
+			}
 		});
 		addEvent(self.broadcastMeBtnRight, 'click', function() {
+			var curLeft = parseInt(getStyle(self.broadcastMeList, 'margin-left'));
+			var eWidth = self.moveWidth;
+			var num = self.itemLen - 2;
 			clearTimeout(self.timer);
-			self.autoMove();
+			if (self.lock) {
+				self.lock = false;
+				self.curIndex++;
+				if (curLeft == -eWidth * num) self.curIndex = 0;
+				self.renderSpot(self.curIndex);
+				self.startMove(self.broadcastMeList, {
+					'margin-left': curLeft - eWidth
+				}, function() {
+					self.lock = true;
+				})
+			}
 		})
 		addEvent(self.broadcastMe, 'mouseenter', function() {
 			console.log("kdfljdkfjkdfjlkd", self)
