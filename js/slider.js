@@ -1,16 +1,13 @@
 (function() {
 	function SliderQfl() {
-		this.domId = 'box';
 		this.init();
-		console.log(this.broadcastMe.touchstart);
 	}
 	SliderQfl.prototype.init = function() {
-		//获取操作DOM节点
 		var self = this;
 		this.curIndex = 0;
 		this.timer = null;
 		this.lock = true;
-		this.oBox = document.getElementById(this.domId);
+		this.oBox = document.getElementById('box');
 		this.broadcastMe = this.oBox.getElementsByTagName('div')[0];
 		this.broadcastMeList = this.broadcastMe.getElementsByTagName('div')[0];
 		this.broadcastMeItem = this.broadcastMeList.getElementsByTagName('div');
@@ -27,11 +24,10 @@
 		this.broadcastMeTool.style.marginLeft = '-75px';
 		this.broadcastMeBtnLeft = document.getElementById('broadcastMe-btn-left');
 		this.broadcastMeBtnRight = document.getElementById('broadcastMe-btn-right');
-
 		this.timer = setTimeout(self.autoMove.bind(self), 3000);
 		this.bindEvent();
 	}
-	SliderQfl.prototype.autoMove = function(direction) {
+	SliderQfl.prototype.autoMove = function(direction, isCb) {
 		var self = this;
 		var curLeft = parseInt(getStyle(this.broadcastMeList, 'margin-left'));
 		var eWidth = this.moveWidth;
@@ -50,7 +46,9 @@
 						self.broadcastMeList.style.marginLeft = '0px';
 						self.curIndex = 0;
 					}
-					self.timer = setTimeout(self.autoMove.bind(self), 3000);
+					if (!isCb) {
+						self.timer = setTimeout(self.autoMove.bind(self), 3000);
+					}
 					self.lock = true;
 				})
 			} else if (direction == "toLeft") {
@@ -64,7 +62,9 @@
 				self.startMove(self.broadcastMeList, {
 					'margin-left': curLeft + eWidth
 				}, function() {
-					self.timer = setTimeout(self.autoMove.bind(self), 3000);
+					if (!isCb) {
+						self.timer = setTimeout(self.autoMove.bind(self), 3000);
+					}
 					self.lock = true;
 				})
 			}
@@ -73,46 +73,10 @@
 	SliderQfl.prototype.bindEvent = function() {
 		var self = this;
 		addEvent(self.broadcastMeBtnLeft, 'click', function() {
-			var curLeft = parseInt(getStyle(self.broadcastMeList, 'margin-left'));
-			var eWidth = self.moveWidth;
-			var num = self.itemLen - 2;
-			clearTimeout(self.timer);
-			if (self.lock) {
-				self.lock = false;
-				if (curLeft == 0) {
-					self.broadcastMeList.style.marginLeft = -eWidth * (num + 1) + 'px';
-					self.curIndex = num + 1;
-				}
-				self.curIndex--;
-				self.renderSpot(self.curIndex);
-				curLeft = parseInt(getStyle(self.broadcastMeList, 'margin-left'));
-				self.startMove(self.broadcastMeList, {
-					'margin-left': curLeft + eWidth
-				}, function() {
-					self.lock = true;
-				})
-			}
+			self.autoMove('toLeft', true);
 		});
 		addEvent(self.broadcastMeBtnRight, 'click', function() {
-			var curLeft = parseInt(getStyle(self.broadcastMeList, 'margin-left'));
-			var eWidth = self.moveWidth;
-			var num = self.itemLen - 2;
-			clearTimeout(self.timer);
-			if (self.lock) {
-				self.lock = false;
-				self.curIndex++;
-				if (curLeft == -eWidth * num) self.curIndex = 0;
-				self.renderSpot(self.curIndex);
-				self.startMove(self.broadcastMeList, {
-					'margin-left': curLeft - eWidth
-				}, function() {
-					if (curLeft == -eWidth * num) {
-						self.broadcastMeList.style.marginLeft = '0px';
-						self.curIndex = 0;
-					}
-					self.lock = true;
-				})
-			}
+			self.autoMove('toRight', true);
 		})
 		addEvent(self.broadcastMe, 'mouseenter', function() {
 			clearTimeout(self.timer);
@@ -123,42 +87,32 @@
 		for (var i = 0; i < this.broadcastMeSpot.length; i++) {
 			(function(i) {
 				addEvent(self.broadcastMeSpot[i], 'click', function(e) {
-
-					// e != undefined ? e.stopPropagaton() : (window.event.cancelBubble = true);
-					// e != undefined ? e.preventDefault() : (window.event.returnValue = false);
-					console.log(e);
 					self.lock = false;
 					clearTimeout(self.timer);
-
 					self.curIndex = i;
 					self.renderSpot(self.curIndex);
 					startMove(self.broadcastMeList, {
 						'margin-left': -i * self.moveWidth
 					}, function() {
 						self.lock = true;
-						// self.timer = setTimeout(self.autoMove.bind(self), 1500)
 					})
 				})
 				addEvent(self.broadcastMeSpot[i], 'touchend', function(e) {
 					self.lock = false;
 					clearTimeout(self.timer);
-
 					self.curIndex = i;
 					self.renderSpot(self.curIndex);
 					startMove(self.broadcastMeList, {
 						'margin-left': -i * self.moveWidth
 					}, function() {
 						self.lock = true;
-						// self.timer = setTimeout(self.autoMove.bind(self), 1500)
 					})
 				})
 			}(i))
 		}
 
 		function touchstart(e) {
-			console.log("dkfkdl");
 			var _self = self;
-			console.log(e);
 			e.returnValue = false;
 			var startTop = _self.offsetTop;
 			var touchstart = e.targetTouches[0];
@@ -172,7 +126,6 @@
 			function touchmove(e) {
 				var self = _self;
 				e.returnValue = false;
-				// e != undefined ? e.stopPropagaton() : (window.event.returnValue = false);
 				var touchmove = e.targetTouches[0];
 				endPos = {
 					x: touchmove.pageX,
@@ -183,44 +136,9 @@
 					y: endPos.y - startPos.y
 				}
 				if (offsetPos.x < 0) {
-					var curLeft = parseInt(getStyle(self.broadcastMeList, 'margin-left'));
-					var eWidth = self.moveWidth;
-					var num = self.itemLen - 2;
-					clearTimeout(self.timer);
-					if (self.lock) {
-						self.lock = false;
-						self.curIndex++;
-						if (curLeft == -eWidth * num) self.curIndex = 0;
-						self.renderSpot(self.curIndex);
-						self.startMove(self.broadcastMeList, {
-							'margin-left': curLeft - eWidth
-						}, function() {
-							if (curLeft == -eWidth * num) {
-								self.broadcastMeList.style.marginLeft = '0px';
-							}
-							self.lock = true;
-						})
-					}
+					self.autoMove('toRight', true)
 				} else {
-					var curLeft = parseInt(getStyle(self.broadcastMeList, 'margin-left'));
-					var eWidth = self.moveWidth;
-					var num = self.itemLen - 2;
-					clearTimeout(self.timer);
-					if (self.lock) {
-						self.lock = false;
-						if (curLeft == 0) {
-							self.broadcastMeList.style.marginLeft = -eWidth * (num + 1) + 'px';
-							self.curIndex = num + 1;
-						}
-						self.curIndex--;
-						self.renderSpot(self.curIndex);
-						curLeft = parseInt(getStyle(self.broadcastMeList, 'margin-left'));
-						self.startMove(self.broadcastMeList, {
-							'margin-left': curLeft + eWidth
-						}, function() {
-							self.lock = true;
-						})
-					}
+					self.autoMove('toLeft', true);
 				}
 			}
 			addEvent(_self.broadcastMe, 'touchmove', touchmove);
@@ -228,17 +146,13 @@
 			function touchend(e) {
 				var self = _self;
 				e.returnValue = false;
-				// e != undefined ? e.stopPropagaton() : (window.event.returnValue = false);
 				removeEvent(self.broadcastMe, 'touchmove', touchmove);
 				removeEvent(self.broadcastMe, 'touchstart', touchstart);
 			}
 			addEvent(_self.broadcastMe, 'touchend', touchend);
 		}
-		// if (self.broadcastMe.touchstart != undefined) {
 		addEvent(self.broadcastMe, 'touchstart', touchstart)
-		// }
 	}
-
 
 	SliderQfl.prototype.renderSpot = function(index) {
 		for (var i = 0; i < this.broadcastMeSpot.length; i++) {
@@ -252,7 +166,6 @@
 		if (attrObj['opacity'] !== undefined) attrObj['opacity'] *= 100;
 		dom.timer = setInterval(function() {
 			var bStop = true;
-
 			for (var attr in attrObj) {
 				if (attr == 'opacity') {
 					iCur = parseFloat(getStyle(dom, attr)) * 100;
@@ -276,9 +189,7 @@
 			}
 		}, 30)
 	}
-	aa = new SliderQfl({
-		domId: 'box'
-	});
+	aa = new SliderQfl({});
 })(window)
 
 var aa;
