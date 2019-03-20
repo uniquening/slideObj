@@ -235,10 +235,8 @@
 			return fBound;
 		};
 	}
-
-
-	aa = new SliderQfl({});
+	window.slider = slider = function() {
+		return new SliderQfl({});
+	}
 })(window);
-
-
-var aa;
+slider();
