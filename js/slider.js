@@ -1,3 +1,4 @@
+;
 (function() {
 	function SliderQfl() {
 		this.init();
@@ -84,14 +85,14 @@
 		addEvent(self.broadcastMe, 'mouseleave', function() {
 			self.timer = setTimeout(self.autoMove.bind(self), 3000);
 		})
-		for (var i = 0; i < this.broadcastMeSpot.length; i++) {
+		for (var i = 0; i < this.broadcastMeSpot.length; i++) {;
 			(function(i) {
 				addEvent(self.broadcastMeSpot[i], 'click', function(e) {
 					self.lock = false;
 					clearTimeout(self.timer);
 					self.curIndex = i;
 					self.renderSpot(self.curIndex);
-					startMove(self.broadcastMeList, {
+					self.startMove(self.broadcastMeList, {
 						'margin-left': -i * self.moveWidth
 					}, function() {
 						self.lock = true;
@@ -102,13 +103,13 @@
 					clearTimeout(self.timer);
 					self.curIndex = i;
 					self.renderSpot(self.curIndex);
-					startMove(self.broadcastMeList, {
+					self.startMove(self.broadcastMeList, {
 						'margin-left': -i * self.moveWidth
 					}, function() {
 						self.lock = true;
 					})
 				})
-			}(i))
+			}(i));
 		}
 
 		function touchstart(e) {
@@ -189,7 +190,55 @@
 			}
 		}, 30)
 	}
+
+	function getStyle(dom, attr) {
+		if (window.getComputedStyle) {
+			return window.getComputedStyle(dom, null)[attr];
+		} else {
+			return dom.currentStyle[attr];
+		}
+	}
+
+	function addEvent(elem, event, fn) {
+		if (elem.addEventListener) {
+			elem.addEventListener(event, fn, false);
+		} else if (elem.attachEvent) {
+			elem.attachEvent('on' + event, fn);
+		} else {
+			elem['on' + event] = fn;
+		}
+	}
+
+	function removeEvent(elem, event, fn) {
+		if (elem.removeEventListener) {
+			elem.removeEventListener(event, fn, false);
+		} else if (elem.detachEvent) {
+			elem.detachEvent('on' + event, fn);
+		} else {
+			elem['on' + event] = null;
+		}
+	}
+	if (!Function.prototype.bind) {
+		Function.prototype.bind = function(oThis) {
+			if (typeof this !== "function") {
+				throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
+			}
+			var aArgs = Array.prototype.slice.call(arguments, 1),
+				fToBind = this,
+				fNOP = function() {},
+				fBound = function() {
+					return fToBind.apply(this instanceof fNOP && oThis ? this : oThis,
+						aArgs.concat(Array.prototype.slice.call(arguments)));
+				};
+			fNOP.prototype = this.prototype;
+			fBound.prototype = new fNOP();
+			return fBound;
+		};
+	}
+
+
 	aa = new SliderQfl({});
-})(window)
+})(window);
+
 
 var aa;
