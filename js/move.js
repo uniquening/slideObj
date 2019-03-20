@@ -19,7 +19,7 @@ function addEvent(elem, event, fn) {
 function removeEvent(elem, event, fn) {
 	if (elem.removeEventListener) {
 		elem.removeEventListener(event, fn, false);
-	} else if (elem.attachEvent) {
+	} else if (elem.detachEvent) {
 		elem.detachEvent('on' + event, fn);
 	} else {
 		elem['on' + event] = null;

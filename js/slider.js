@@ -56,7 +56,7 @@
 			} else if (direction == "toLeft") {
 				if (curLeft == 0) {
 					self.broadcastMeList.style.marginLeft = -eWidth * (num + 1) + 'px';
-					self.curIndex = num;
+					self.curIndex = num + 1;
 				}
 				self.curIndex--;
 				self.renderSpot(self.curIndex);
@@ -81,7 +81,7 @@
 				self.lock = false;
 				if (curLeft == 0) {
 					self.broadcastMeList.style.marginLeft = -eWidth * (num + 1) + 'px';
-					self.curIndex = num;
+					self.curIndex = num + 1;
 				}
 				self.curIndex--;
 				self.renderSpot(self.curIndex);
@@ -106,6 +106,10 @@
 				self.startMove(self.broadcastMeList, {
 					'margin-left': curLeft - eWidth
 				}, function() {
+					if (curLeft == -eWidth * num) {
+						self.broadcastMeList.style.marginLeft = '0px';
+						self.curIndex = 0;
+					}
 					self.lock = true;
 				})
 			}
@@ -191,6 +195,9 @@
 						self.startMove(self.broadcastMeList, {
 							'margin-left': curLeft - eWidth
 						}, function() {
+							if (curLeft == -eWidth * num) {
+								self.broadcastMeList.style.marginLeft = '0px';
+							}
 							self.lock = true;
 						})
 					}
@@ -203,7 +210,7 @@
 						self.lock = false;
 						if (curLeft == 0) {
 							self.broadcastMeList.style.marginLeft = -eWidth * (num + 1) + 'px';
-							self.curIndex = num;
+							self.curIndex = num + 1;
 						}
 						self.curIndex--;
 						self.renderSpot(self.curIndex);
