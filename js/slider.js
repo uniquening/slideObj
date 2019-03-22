@@ -19,12 +19,10 @@
 		this.lock = true;
 		this.oBox = dom;
 		this.broadcastMe = this.oBox.getElementsByTagName('div')[0];
-		console.log(this.broadcastMe)
 		this.broadcastMeList = this.broadcastMe.getElementsByTagName('div')[0];
 		this.broadcastMeItem = this.broadcastMeList.getElementsByTagName('div');
 		this.itemLen = this.broadcastMeItem.length;
 		this.moveWidth = this.oBox.offsetWidth;
-		console.log(this.moveWidth)
 		this.broadcastMeList.style.width = this.moveWidth * this.itemLen + 'px';
 		for (var i = 0; i < this.broadcastMeItem.length; i++) {
 			this.broadcastMeItem[i].style.width = this.moveWidth + 'px';
@@ -59,9 +57,6 @@
 			'</div><div id="broadcastMe-btn-left" class="broadcastMe-btn broadcastMe-btn-left"> &lt; </div>' +
 			'<div id="broadcastMe-btn-right" class="broadcastMe-btn broadcastMe-btn-right"> &gt;</div></div>'
 		el.innerHTML = str;
-
-		console.log(str);
-
 	}
 	SliderQfl.prototype.autoMove = function(direction, isCb) {
 		var self = this;
@@ -275,4 +270,3 @@
 		return new SliderQfl(el, imagesAndUrl, JSON);
 	}
 })(window);
-// slider('box');
