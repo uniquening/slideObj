@@ -11,12 +11,14 @@
 			margin: 5rem auto;
 			text-align: center;
    		overflow: hidden;
+      width: 100%;
+      max-width: 640px;
 		}
   </style>
  </head> 
  <body> 
   <div id="box"> 
-   <div class="broadcastMe"> 
+<!--    <div class="broadcastMe"> 
     <div class="broadcastMe-list"> 
      <div class="broadcastMe-item"> 
       <a href="#"><img src="../images/1.jpg" alt="轮播图图片-pawn" /></a> 
@@ -46,10 +48,31 @@
     </div> 
     <div id="broadcastMe-btn-left" class="broadcastMe-btn broadcastMe-btn-left"> &lt; </div> 
     <div id="broadcastMe-btn-right" class="broadcastMe-btn broadcastMe-btn-right"> &gt;</div> 
-   </div> 
+   </div>  -->
   </div> 
   <script src="../js/slider.js"></script> 
   <script>
+  var box = document.getElementById('box');
+    var imagesAndUrl = [{
+      imgSrc : '../images/1.jpg',
+      linkHref : "#"
+    },{
+      imgSrc : '../images/2.jpg',
+      linkHref : '1'
+    },{
+      imgSrc : '../images/3.jpg',
+      linkHref : '#'
+    },{
+      imgSrc : '../images/4.jpg',
+      linkHref : '#'
+    },{
+      imgSrc : '../images/5.jpg',
+      linkHref : '#'
+    }];
+    var broadcast = slider(box,imagesAndUrl,{
+      transitionTime : 30, // 动画过渡时间，默认为800ms
+      intervalTime : 2000 // 图片切换时间，默认为5s
+    });
 </script>  
  </body>
 </html>

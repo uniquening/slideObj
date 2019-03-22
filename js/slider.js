@@ -1,20 +1,30 @@
 ;
 (function() {
-	function SliderQfl(dom) {
-		dom = dom || 'box'
-		this.init(dom);
+	function SliderQfl(el, imagesAndUrl, JSON) {
+		if (el == null || (imagesAndUrl == null)) {
+			console.log("请传入节点或者图片数据及链接！");
+			return;
+		}
+		this.el = el;
+		this.imagesAndUrl = imagesAndUrl;
+		this.transitionTime = JSON.transitionTime || 30;
+		this.intervalTime = JSON.intervalTime || 3000;
+		this.createDom(this.el, this.imagesAndUrl);
+		this.init(el, this.intervalTime);
 	}
-	SliderQfl.prototype.init = function(dom) {
+	SliderQfl.prototype.init = function(dom, intervalTime) {
 		var self = this;
 		this.curIndex = 0;
 		this.timer = null;
 		this.lock = true;
-		this.oBox = document.getElementById(dom);
+		this.oBox = dom;
 		this.broadcastMe = this.oBox.getElementsByTagName('div')[0];
+		console.log(this.broadcastMe)
 		this.broadcastMeList = this.broadcastMe.getElementsByTagName('div')[0];
 		this.broadcastMeItem = this.broadcastMeList.getElementsByTagName('div');
 		this.itemLen = this.broadcastMeItem.length;
-		this.moveWidth = this.broadcastMeItem[0].offsetWidth;
+		this.moveWidth = this.oBox.offsetWidth;
+		console.log(this.moveWidth)
 		this.broadcastMeList.style.width = this.moveWidth * this.itemLen + 'px';
 		for (var i = 0; i < this.broadcastMeItem.length; i++) {
 			this.broadcastMeItem[i].style.width = this.moveWidth + 'px';
@@ -26,8 +36,32 @@
 		this.broadcastMeTool.style.marginLeft = '-75px';
 		this.broadcastMeBtnLeft = document.getElementById('broadcastMe-btn-left');
 		this.broadcastMeBtnRight = document.getElementById('broadcastMe-btn-right');
-		this.timer = setTimeout(self.autoMove.bind(self), 3000);
+		this.timer = setTimeout(self.autoMove.bind(self), intervalTime);
 		this.bindEvent();
+	}
+	SliderQfl.prototype.createDom = function(el, imagesAndUrl) {
+		var str = '';
+		var len = imagesAndUrl.length;
+		var imgEl = '';
+		var spotEl = '';
+		for (var i = 0; i < len; i++) {
+			imgEl += '<div class="broadcastMe-item">' +
+				'<a href="' + imagesAndUrl[i].linkHref + '"><img src="' + imagesAndUrl[i].imgSrc + '" alt="轮播图图片-' + (i + 1) + '" /></a></div>'
+			if (i == 0) {
+				spotEl += '<div class="broadcastMe-spot active"></div>'
+			} else {
+				spotEl += '<div class="broadcastMe-spot"></div>'
+			}
+		}
+		str += '<div class="broadcastMe"><div class="broadcastMe-list">' + imgEl +
+			'<div class="broadcastMe-item"><a href="' + imagesAndUrl[0].linkHref + '"><img src="' + imagesAndUrl[0].imgSrc + '" alt="轮播图图片-' + 'add' + '" /></a></div></div>' +
+			'<div id="broadcastMe-tool" class="broadcastMe-tool">' + spotEl +
+			'</div><div id="broadcastMe-btn-left" class="broadcastMe-btn broadcastMe-btn-left"> &lt; </div>' +
+			'<div id="broadcastMe-btn-right" class="broadcastMe-btn broadcastMe-btn-right"> &gt;</div></div>'
+		el.innerHTML = str;
+
+		console.log(str);
+
 	}
 	SliderQfl.prototype.autoMove = function(direction, isCb) {
 		var self = this;
@@ -164,6 +198,7 @@
 	}
 
 	SliderQfl.prototype.startMove = function(dom, attrObj, callback) {
+		var self = this;
 		clearInterval(dom.timer);
 		if (attrObj['opacity'] !== undefined) attrObj['opacity'] *= 100;
 		dom.timer = setInterval(function() {
@@ -189,7 +224,7 @@
 				clearInterval(dom.timer);
 				typeof callback == 'function' && callback();
 			}
-		}, 30)
+		}, self.transitionTime)
 	}
 
 	function getStyle(dom, attr) {
@@ -236,8 +271,8 @@
 			return fBound;
 		};
 	}
-	window.slider = slider = function(dom) {
-		return new SliderQfl(dom);
+	window.slider = slider = function(el, imagesAndUrl, JSON) {
+		return new SliderQfl(el, imagesAndUrl, JSON);
 	}
 })(window);
-slider('box');
+// slider('box');
